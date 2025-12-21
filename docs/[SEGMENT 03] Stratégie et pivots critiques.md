@@ -1,3 +1,5 @@
+docs/[SEGMENT 03] Stratégie et pivots critiques.md
+
 Tout commence par une séance de brainstorming prolongée avec un LLM correctement prompté.
 À ce stade, personne ne connaît réellement l’étendue des capacités de surveillance en face. Il ne s’agit pas d’ignorer cette incertitude, mais de travailler à l’intérieur.
 
