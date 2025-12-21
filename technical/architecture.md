@@ -1,148 +1,115 @@
-1. Plateforme matérielle principale
+Architecture technique — L512
 
-Modèle : ThinkPad L512
-Architecture : x86 legacy
-Rôle : nœud de calcul isolé
-Exposition radio : aucune
-Interfaces actives : Ethernet uniquement
+Portée limitée à l’état du système.
+Aucune pédagogie.
+Description factuelle des éléments en présence.
+
+Plateforme matérielle
+
+ThinkPad L512.
+Architecture x86 legacy.
+Machine dédiée.
+Interfaces actives limitées à Ethernet.
+Aucune interface radio fonctionnelle.
 
 Contraintes :
-Aucun périphérique radio intégré fonctionnel
-Aucun stockage interne critique utilisé pour l’exécution
+- pas de Wi‑Fi
+- pas de Bluetooth
+- pas de caméra
+- pas de micro
+- réduction matérielle volontaire
 
-2. Chaîne de confiance firmware
-   
-2.1 Intel Management Engine
-Intel ME présent (niveau -3)
-Neutralisation partielle (~90 %) via me_cleaner
-ME laissé dans un état minimal requis au boot
+Firmware
 
-2.2 Firmware système
-BIOS remplacé par coreboot / libreboot
-Configuration minimale
-Désactivation des fonctionnalités non nécessaires
-Accès BIOS restreint
+Intel Management Engine présent.
+Neutralisation partielle via me_cleaner.
+ME laissé dans un état minimal requis au boot.
 
-3. Chaîne de boot
-Boot exclusivement depuis support externe
-Support : disque externe chiffré LUKS
+Firmware système remplacé.
+coreboot / libreboot.
+Fonctionnalités non nécessaires désactivées.
+Accès firmware restreint.
 
-SSD interne :
-jamais utilisé pour le boot
-jamais monté en environnement opérationnel
-utilisé comme stockage leurre (Honeypot anti-forensic)
+Chaîne de boot
+
+Boot exclusivement depuis support externe.
+Support chiffré (LUKS).
+Aucun boot interne autorisé.
+
+Stockage interne présent.
+Jamais utilisé pour l’exécution.
+Jamais monté en environnement opérationnel.
+Utilisé comme surface crédible persistante.
 
 Invariants :
+- aucune persistance opérationnelle locale
+- dépendance totale au support externe
 
-Aucun démarrage sans support externe valide
-Aucune persistance opérationnelle locale
+Réseau — vue globale
 
-4. Topologie réseau globale
-4.1 Chaîne réseau logique
+Le laptop ne communique jamais directement avec un réseau radio.
 
-Alfa WAN → Raspberry Pi 4 → Tunnel WireGuard → (Tor optionnel) → Laptop (Ethernet)
-Le laptop ne communique jamais directement avec un réseau radio
-Toute exposition réseau est médiée par le Pi
+Chaîne logique :
 
-5. Orchestration réseau (Raspberry Pi 4)
+Alfa WAN  
+→ Raspberry Pi 4  
+→ tunnel WireGuard  
+→ Tor (optionnel)  
+→ Ethernet  
+→ laptop  
+
+Toute exposition réseau est médiée.
+
+Raspberry Pi 4 — rôle intermédiaire
+
 Fonctions assurées :
-
-Randomisation MAC avant chaque association
-Établissement du tunnel WireGuard
-Supervision de l’état du tunnel
-
-Kill-switch strict :
-nftables / iptables
-watchdog actif
-Centralisation de logs chiffrés
+- association radio
+- randomisation MAC
+- établissement du tunnel WireGuard
+- supervision du tunnel
+- kill‑switch strict (iptables / nftables)
+- centralisation de logs chiffrés
 
 Interfaces :
-Entrée : USB (Alfa)
-Sortie : Ethernet (vers laptop)
+- entrée : USB (Alfa)
+- sortie : Ethernet (vers laptop)
 
-6. Sous-système radio
-6.1 Interfaces utilisées
+Sous‑système radio
 
-Alfa Network AWUS036 : WAN
-Alfa NHA : monitor / injection
+Interfaces utilisées :
+- Alfa Network AWUS036 (WAN)
+- Alfa NHA (monitor / injection)
 
 Contraintes :
+- rôles fixes
+- aucun switch dynamique
+- scripts de verrouillage dédiés
+- séparation stricte des usages
 
-Rôles fixes
-Aucun switch dynamique de mode
-Scripts de verrouillage dédiés
-Séparation stricte des usages
+Stockage
 
-7. Stockage
-7.1 Stockage opérationnel
+Stockage opérationnel :
+- disque externe chiffré
+- usage éphémère
+- clés dédiées
+- effacement logique après déconnexion
 
-Disque externe chiffré (LUKS)
-Usage éphémère
-Clés dédiées
-Effacement logique après déconnexion
+Stockage interne :
+- SSD interne
+- système crédible simulé
+- activité persistante
+- aucun lien avec les opérations réelles
 
-7.2 Stockage interne (leurre)
+Périphériques
 
-SSD interne installé
-Système cohérent simulé
-Activité crédible persistante
-Aucun lien avec les opérations réelles
+Aucun périphérique USB tiers autorisé.
+Supports dédiés par machine.
+Ports inutilisés désactivés physiquement.
 
-8. Gestion des périphériques
+Réductions matérielles
 
-Aucun périphérique USB externe autorisé hors disque dédié
-Clés et supports strictement associés à la machine
-Ports inutilisés désactivés physiquement
-
-9. Réductions matérielles
-
-Micro retiré physiquement
-Caméra retirée physiquement
-Wi‑Fi retiré physiquement
-Bluetooth retiré physiquement
-Ports non nécessaires neutralisés
-RAM soudée (réduction surface de dumping)
-
-10. Gestion de l’alimentation
-10.1 Alimentation réseau exposé
-
-PB1
-Alimente : Raspberry Pi + Alfa
-Sortie stable continue
-Pass-through
-Régulation DC‑DC
-Faible ripple
-10.2 Alimentation du laptop
-
-PB2
-Intercalée entre secteur et laptop
-Rupture de liaison directe secteur → machine
-Atténuation des variations électriques
-Bonnes pratiques intégrées :
-Câbles blindés
-Ferrite beads
-Chargeurs distincts
-Alternance des cycles de charge
-
-Option :
-
-UPS / transformateur d’isolation
-Module régulé dédié
-
-11. Transport et confinement
-
-Stockage dans mallette Faraday
-Structure :
-bois
-aluminium
-couche conductrice interne
-Confinement total en état fermé
-
-12. Invariants techniques
-
-Le laptop ne voit jamais le Wi‑Fi
-Le laptop ne voit jamais le WAN
-Le réseau est toujours médié
-Le stockage interne n’est jamais critique
-L’exposition est observable
-La persistance est externe
+Micro retiré physiquement.
+Caméra retirée physiquement.
+Modules radio retirés physiquement.
+Ports non nécessaires neutralisés.
+RAM soudée (réduction de surface).
