@@ -1,3 +1,8 @@
+# L512 — Hardened OPSEC Architecture
+
+**Practical exploration of OPSEC limits through hardware constraints.**  
+ThinkPad L512 (Coreboot, neutralized Intel ME) + compartmentalized networking via Raspberry Pi 4. Documents threat model, invariants, and real-world tradeoffs in adversarial computing environments.
+
 Ce projet est né d’un besoin simple : observer concrètement ce que devient une posture OPSEC lorsqu’elle est poussée vers ses limites, sans l’abriter derrière des abstractions ou des discours théoriques.
 
 L’objet central un ThinkPad T512 volontairement ancien n’a pas été choisi pour ses performances, mais pour sa capacité à servir de support à une réflexion systémique. Le but n’est pas d’optimiser une machine, mais de matérialiser des hypothèses : où se situent réellement les barrières, quels sont les points de contrôle effectifs, quels pivots restent disponibles lorsque l’on cesse de raisonner par “features” isolées.
